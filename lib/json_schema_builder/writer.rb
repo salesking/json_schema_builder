@@ -11,7 +11,7 @@ module JsonSchemaBuilder
       res = []
       create_file_path
       models_as_hash.each do |model|
-        file = File.join('json-schema',"#{model['title'].downcase}.json")
+        file = File.join( out_path, "#{model['title'].downcase}.json")
         File.open( file, 'w+' ) {|f| f.write(JSON.pretty_generate(model)) }
         res << "#{file} created"
       end
@@ -53,16 +53,36 @@ module JsonSchemaBuilder
       hsh
     end
 
+    # @return [Array<ActiveRecord::Base>] AR::Base descendant models
     def models
-      #TODO call models at least once so they are in module scope .. need to go for file structure
-      root_dir = ROOT
-      Dir.glob( + '/app/models/**/*.rb').each { |file| require file }
+      # require so they are in module scope
+      Dir.glob( model_path ).each { |file| require file }
       model_names = Module.constants.select { |c| (eval "#{c}").is_a?(Class) && (eval "#{c}") < ::ActiveRecord::Base }
       model_names.map{|i| "#{i}".constantize}
     end
 
     def create_file_path
-      FileUtils.mkdir('json-schema') unless File.exists?('json-schema')
+      FileUtils.mkdir_p(out_path) unless File.exists?(out_path)
+    end
+
+    def model_path
+      @model_path ||= File.join( Dir.pwd, 'app/models', '**/*.rb')
+    end
+
+    # Set the model path
+    # @param [String] path or file or pattern like models/**/*.rb
+    def model_path=(path)
+      @model_path = path
+    end
+
+    # Path to write json files
+    def out_path
+      @out_path ||= File.join( Dir.pwd, 'json-schema')
+    end
+
+    # @param [String] path to json schema files
+    def out_path=(path)
+      @out_path = path
     end
 
     private

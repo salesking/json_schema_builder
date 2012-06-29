@@ -18,6 +18,9 @@ RSpec.configure do |config|
   config.treat_symbols_as_metadata_keys_with_true_values = true
   config.run_all_when_everything_filtered = true
   config.filter_run :focus
+  config.after(:all) do
+    FileUtils.rm_rf(test_out_path)
+  end
 end
 
 ActiveRecord::Base.establish_connection({
@@ -25,3 +28,7 @@ ActiveRecord::Base.establish_connection({
   'database' => ':memory:'
 })
 load(File.join(File.dirname(__FILE__), 'fixtures/ar_schema.rb'))
+
+def test_out_path
+  File.join( File.dirname( __FILE__), 'tmp')
+end
