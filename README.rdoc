@@ -1,5 +1,7 @@
 = JSON Schema Builder
 
+{<img src="https://secure.travis-ci.org/salesking/json_schema_builder.png?branch=master" alt="Build Status" />}[http://travis-ci.org/salesking/json_schema_builder]
+
 Build a JSON schema for your ActiveRecord models. STOP your API pains!
 
 The created schema.json files are meant as stubs and need to be enriched with
