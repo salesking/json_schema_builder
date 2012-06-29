@@ -1,3 +1,4 @@
+require 'active_record'
 module JsonSchemaBuilder
 
   # Create json schema files for each model in
