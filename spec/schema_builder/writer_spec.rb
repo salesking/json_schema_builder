@@ -1,10 +1,10 @@
 require 'spec_helper'
 
-describe JsonSchemaBuilder::Writer do
+describe SchemaBuilder::Writer do
 
   context 'in general' do
     before :each do
-      @writer = JsonSchemaBuilder::Writer.new
+      @writer = SchemaBuilder::Writer.new
     end
     it 'should get model_path' do
       @writer.model_path.should == "#{Dir.pwd}/app/models/**/*.rb"
@@ -23,7 +23,7 @@ describe JsonSchemaBuilder::Writer do
 
   context 'file writing' do
     before :each do
-      @writer = JsonSchemaBuilder::Writer.new
+      @writer = SchemaBuilder::Writer.new
       @writer.out_path = test_out_path
       @writer.model_path = File.join( File.expand_path( __FILE__), '../fixtures/*.rb')
       @writer.write

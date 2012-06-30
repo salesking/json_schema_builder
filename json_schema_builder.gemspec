@@ -1,15 +1,15 @@
 # -*- encoding: utf-8 -*-
-$:.push File.expand_path("../lib", __FILE__)
-require "json_schema_builder/version"
+$:.push File.expand_path('../lib', __FILE__)
+require 'schema_builder/version'
 
 Gem::Specification.new do |s|
-  s.name        = "json_schema_builder"
-  s.version     = JsonSchemaBuilder::VERSION
-  s.authors     = ["Georg Leciejewski"]
-  s.email       = ["gl@salesking.eu"]
-  s.homepage    = "http://www.salesking.eu"
-  s.summary     = %q{Build JSON Schema fields for ActiveRecord models}
-  s.description = %q{Build JSON Schema fields for ActiveRecord models}
+  s.name        = 'json_schema_builder'
+  s.version     = SchemaBuilder::VERSION
+  s.authors     = ['Georg Leciejewski']
+  s.email       = ['gl@salesking.eu']
+  s.homepage    = 'http://www.salesking.eu/dev'
+  s.summary     = %q{A good API needs JSON Schema description! Get it right and build JSON Schemata for your ActiveRecord models}
+  s.description = %q{The first step to a clean and simple API is a unified API description in form of a shared JSON Schema}
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")

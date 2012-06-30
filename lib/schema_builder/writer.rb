@@ -1,5 +1,5 @@
 require 'active_record'
-module JsonSchemaBuilder
+module SchemaBuilder
 
   # Create json schema files for each model in
   # Rails.root/json-schema/modelName.json
@@ -112,11 +112,11 @@ module JsonSchemaBuilder
     # @param [Symbol] col_type derived from ActiveRecord model
     # @param [Hash{String=>String}] hsh with field properties
     def set_format(col_type, hsh)
-      hsh['format'] = if col_type == :datetime
-                        'date-time'
-                      elsif col_type == :date
-                        'date'
-                      end
+      if col_type == :datetime
+        hsh['format'] = 'date-time'
+      elsif col_type == :date
+        hsh['format']= 'date'
+      end
     end
 
     # Set a field to read-only
