@@ -4,9 +4,9 @@ namespace :schema do
   task :build do |t,args|
     if defined?(Rails) && Rails.respond_to?(:application)
       # Rails 3
-      Rails.application.initialize! #eager_load!
+      Rails.application.initialize!
     elsif defined?(Rails::Initializer)
-      # Rails 2.3
+      # Rails 2.3 .. untested
       $rails_rake_task = false
       Rails::Initializer.run :load_application_classes
     end
