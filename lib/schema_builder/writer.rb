@@ -9,7 +9,7 @@ module SchemaBuilder
   class Writer
 
     def write
-      out = {new: [], old: [] }
+      out = {:new => [], :old => [] }
       create_out_path
       models_as_hash.each do |model|
         file = File.join( out_path, "#{model['title'].downcase}.json")
