@@ -8,7 +8,7 @@ include GLI
 
 version SchemaBuilder::VERSION
 
-desc "Creates schema file in current directory/json-schema/*.json"
+desc "Create schema files in json-schema/*.json"
 command :build do |c|
   c.action do |global_options, options, args|
     builder = SchemaBuilder::Writer.new

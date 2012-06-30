@@ -4,13 +4,13 @@ module SchemaBuilder
   # Create json schema files for each model in
   # Rails.root/json-schema/modelName.json
   # @example
-  #   builder = JsonSchemaBuilder::Writer.new
+  #   builder = SchemaBuilder::Writer.new
   #   builder.write
   class Writer
 
     def write
       res = []
-      create_file_path
+      create_out_path
       models_as_hash.each do |model|
         file = File.join( out_path, "#{model['title'].downcase}.json")
         File.open( file, 'w+' ) {|f| f.write(JSON.pretty_generate(model)) }
@@ -54,20 +54,19 @@ module SchemaBuilder
       hsh
     end
 
-    # @return [Array<ActiveRecord::Base>] AR::Base descendant models
+    # @return [Array<Class>] classes(models) descending from ActiveRecord::Base
     def models
-      # require so they are in module scope
       Dir.glob( model_path ).each { |file| require file }
       model_names = Module.constants.select { |c| (eval "#{c}").is_a?(Class) && (eval "#{c}") < ::ActiveRecord::Base }
       model_names.map{|i| "#{i}".constantize}
     end
 
-    def create_file_path
+    def create_out_path
       FileUtils.mkdir_p(out_path) unless File.exists?(out_path)
     end
 
     def model_path
-      @model_path ||= File.join( Dir.pwd, 'app/models', '**/*.rb')
+      @model_path ||= File.join( base_path, 'app/models', '**/*.rb')
     end
 
     # Set the model path
@@ -78,12 +77,21 @@ module SchemaBuilder
 
     # Path to write json files
     def out_path
-      @out_path ||= File.join( Dir.pwd, 'json-schema')
+      @out_path ||= File.join( base_path, 'json-schema')
     end
 
     # @param [String] path to json schema files
     def out_path=(path)
       @out_path = path
+    end
+
+    # Base path to application/framework e.g. Rails.root.
+    # Default to current working dir
+    def base_path
+      @base_path ||= Dir.pwd
+    end
+    def base_path=(path)
+      @base_path = path
     end
 
     private

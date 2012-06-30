@@ -1,0 +1,2 @@
+require 'json_schema_builder'
+task "schema:build"
