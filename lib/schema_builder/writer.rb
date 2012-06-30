@@ -9,14 +9,21 @@ module SchemaBuilder
   class Writer
 
     def write
-      res = []
+      out = {new: [], old: [] }
       create_out_path
       models_as_hash.each do |model|
         file = File.join( out_path, "#{model['title'].downcase}.json")
-        File.open( file, 'w+' ) {|f| f.write(JSON.pretty_generate(model)) }
-        res << "#{file} created"
+        if File.exist? file
+          out[:old] << file
+        else
+          File.open( file, 'w+' ) {|f| f.write(JSON.pretty_generate(model)) }
+          out[:new] << "#{file} created"
+        end
       end
-      puts res.join("\n")
+      puts "== Existing Files ==\n" unless out[:old].empty?
+      puts out[:old].join("\n")
+      puts "== New Files ==\n"
+      puts out[:new].join("\n")
     end
 
     def models_as_hash

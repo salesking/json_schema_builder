@@ -1,7 +1,7 @@
 module SchemaBuilder
-  class Railtie < Rails::Railtie
+  class Railtie < ::Rails::Railtie
     rake_tasks do
-      Dir[File.join(File.dirname(__FILE__),'tasks/*.rake')].each { |f| load f }
+      require "schema_builder/tasks"
     end
   end
 end

@@ -14,7 +14,7 @@ Hook the gem into your rails app and create the schema files.
 
   gem 'json_schema_builder'
 
-  schema build
+  rake schema:build
 
 Your Models and their fields are written into JSON files which you can
 pimp further.
