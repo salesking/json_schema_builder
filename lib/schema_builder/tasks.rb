@@ -1,16 +1,17 @@
 namespace :schema do
-  rails_env = ENV['RAILS_ENV'] || 'development'
-  desc "create schema files in json-schema/*.json"
+
+  desc "create JSON schema files in json-schema/*.json"
   task :build do |t,args|
     if defined?(Rails) && Rails.respond_to?(:application)
-      # Rails 3
       Rails.application.initialize!
-    elsif defined?(Rails::Initializer)
-      # Rails 2.3 .. untested
-      $rails_rake_task = false
-      Rails::Initializer.run :load_application_classes
+    elseif defined?(Rails::Initializer)
+      # Rails 2.3
+      puts "== Hiccup ==\n"
+      puts "Sorry Rails < 3 is not supported\n You can still write a schema by hand .. it's not that difficult.\n Btw. you should move to Rails 3 anyway!"
+      next
     end
     builder = SchemaBuilder::Writer.new
+    builder.routes = Rails.application.routes.routes.routes
     builder.write
   end
 end

@@ -7,7 +7,10 @@ module SchemaBuilder
   #   builder = SchemaBuilder::Writer.new
   #   builder.write
   class Writer
+    # [Array<Journey::Routes>] from Rails.application.routes.routes.routes
+    attr_accessor :routes
 
+    # Create schema files
     def write
       out = {:new => [], :old => [] }
       create_out_path
@@ -17,19 +20,22 @@ module SchemaBuilder
           out[:old] << file
         else
           File.open( file, 'w+' ) {|f| f.write(JSON.pretty_generate(model)) }
-          out[:new] << "#{file} created"
+          out[:new] << file
         end
       end
-      puts "== Existing Files ==\n" unless out[:old].empty?
-      puts out[:old].join("\n")
-      puts "== New Files ==\n"
+      unless out[:old].empty?
+        puts "== Existing Files ==\n"
+        puts "Please rename them before they can be re-generated\n"
+        puts out[:old].join("\n")
+      end
+      puts "== Created Files ==\n" unless out[:new].empty?
       puts out[:new].join("\n")
     end
 
     def models_as_hash
       out = []
       models.each do |model|
-        obj = base_hash
+        obj = schema_template
         obj['title'] = model.name
         props = {}
         model.columns_hash.each do |name, col|
@@ -39,19 +45,61 @@ module SchemaBuilder
           set_readonly(name,prop)
           set_type(col.type, prop)
           set_format(col.type, prop)
-
           prop['default'] = col.default if col.default
           prop['maxlength'] = col.limit if col.type == :string && col.limit
           props["#{name}"] = prop
         end
         obj['properties'] = props
         out << obj
+        #add links
+        if links = links_as_hash[model.name.tableize]
+          obj['links'] = links
+        end
       end # models
       out
     end
 
+    # Collect links from rails routes
+    # TODO detect nesting /pdts/:pdt_id/pages/:id(.:format)
+    #
+    # @return [Hash{String=>Array<Hash{ String=>String }> } ]
+    #   { 'articles' => [
+    #       { 'rel' => 'create'
+    #         'method' => POST
+    #         'href' => 'articles/'
+    #       },
+    #       {more articles actions}
+    #     ],
+    #    'users' => []
+    #   }
+    def links_as_hash
+      @links ||= begin
+        skip_contrl = ['passwords', 'sessions', 'users', 'admin']
+        skip_actions = ['edit', 'new']
+        out = {}
+        routes.collect do |route|  #Journey::Route object
+          reqs = route.requirements
+          next if reqs.empty? ||
+                  skip_contrl.detect{|c| reqs[:controller][c] } ||
+                  skip_actions.detect{|a| reqs[:action][a]}
+
+          # setup links ary
+          out[ reqs[:controller] ] = [] unless out[reqs[:controller]]
+          # add actions as hash
+          unless out[ reqs[:controller] ].detect{ |i| i[:rel] == reqs[:action] }
+            link = {:rel => reqs[:action],
+                    :method=> route.verb.source.gsub(/[$^]/, ''),
+                    :href => route.path.spec.to_s.gsub(/\(\.:format\)/, '').gsub(/:id/, '{id}')
+                    }
+            out[reqs[:controller]] << link
+          end
+        end if routes
+        out
+      end
+    end
+
     #@return [Hash{String=>Mixed}] base json schema object hash
-    def base_hash
+    def schema_template
       hsh = {}
       hsh['type'] = 'object'
       hsh['title'] = ''
