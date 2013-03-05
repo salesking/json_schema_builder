@@ -15,10 +15,11 @@ module SchemaBuilder
       out = {:new => [], :old => [] }
       create_out_path
       models_as_hash.each do |model|
-        file = File.join( out_path, "#{model['name'].downcase}.json")
+        file = File.join( out_path, "#{model['name']}.json")
         if File.exist? file
           out[:old] << file
         else
+          FileUtils.mkdir_p(File.dirname(file))
           File.open( file, 'w+' ) {|f| f.write(JSON.pretty_generate(model)) }
           out[:new] << file
         end
@@ -104,8 +105,7 @@ module SchemaBuilder
       hsh = {}
       hsh['type'] = 'object'
       hsh['title'] = ''
-      hsh['name'] = ''
-      hsh['description'] = 'the object description'
+      hsh['description'] = 'object'
       hsh['properties'] = {}
       hsh['links'] = []
       hsh
@@ -113,9 +113,11 @@ module SchemaBuilder
 
     # @return [Array<Class>] classes(models) descending from ActiveRecord::Base
     def models
-      Dir.glob( model_path ).each { |file| require file }
-      model_names = Module.constants.select { |c| (eval "#{c}").is_a?(Class) && (eval "#{c}") < ::ActiveRecord::Base }
-      model_names.map{|i| "#{i}".constantize}
+      #Dir.glob( model_path ).each { |file| require file }
+      #model_names = Module.constants.select { |c| (eval "#{c}").is_a?(Class) && (eval "#{c}") < ::ActiveRecord::Base }
+      #model_names.map{|i| "#{i}".constantize}
+      Rails.application.eager_load!
+      ActiveRecord::Base.descendants
     end
 
     def create_out_path
