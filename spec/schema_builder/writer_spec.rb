@@ -21,6 +21,21 @@ describe SchemaBuilder::Writer do
     end
   end
 
+  context 'model naming' do
+    before :each do
+      @writer = SchemaBuilder::Writer.new
+      @user_hash = @writer.models_as_hash.first
+    end
+
+    it 'should set title to model human name' do
+      @user_hash['title'].should == 'User'
+    end
+
+    it 'should set name to lowercase model name' do
+      @user_hash['name'].should == 'user'
+    end
+  end
+
   context 'file writing' do
     before :each do
       @writer = SchemaBuilder::Writer.new

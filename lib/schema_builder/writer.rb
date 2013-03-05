@@ -15,7 +15,7 @@ module SchemaBuilder
       out = {:new => [], :old => [] }
       create_out_path
       models_as_hash.each do |model|
-        file = File.join( out_path, "#{model['title'].downcase}.json")
+        file = File.join( out_path, "#{model['name'].downcase}.json")
         if File.exist? file
           out[:old] << file
         else
@@ -36,7 +36,8 @@ module SchemaBuilder
       out = []
       models.each do |model|
         obj = schema_template
-        obj['title'] = model.name
+        obj['name'] = model.name.underscore
+        obj['title'] = model.model_name.human
         props = {}
         model.columns_hash.each do |name, col|
           prop = {}
@@ -103,7 +104,8 @@ module SchemaBuilder
       hsh = {}
       hsh['type'] = 'object'
       hsh['title'] = ''
-      hsh['description'] = 'object'
+      hsh['name'] = ''
+      hsh['description'] = 'the object description'
       hsh['properties'] = {}
       hsh['links'] = []
       hsh
