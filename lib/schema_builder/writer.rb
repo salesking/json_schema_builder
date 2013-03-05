@@ -113,11 +113,11 @@ module SchemaBuilder
 
     # @return [Array<Class>] classes(models) descending from ActiveRecord::Base
     def models
-      #Dir.glob( model_path ).each { |file| require file }
-      #model_names = Module.constants.select { |c| (eval "#{c}").is_a?(Class) && (eval "#{c}") < ::ActiveRecord::Base }
-      #model_names.map{|i| "#{i}".constantize}
-      Rails.application.eager_load!
-      ActiveRecord::Base.descendants
+      Dir.glob( model_path ).each { |file| require file }
+      model_names = Module.constants.select { |c| (eval "#{c}").is_a?(Class) && (eval "#{c}") < ::ActiveRecord::Base }
+      model_names.map{|i| "#{i}".constantize}
+      #::Rails.application.eager_load!
+      #ActiveRecord::Base.descendants
     end
 
     def create_out_path
