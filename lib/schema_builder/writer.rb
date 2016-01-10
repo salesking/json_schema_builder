@@ -43,7 +43,7 @@ module SchemaBuilder
         model.columns_hash.each do |name, col|
           prop = {}
           prop['description'] = 'the field description'
-          prop['identity'] = true if col.primary
+          prop['identity'] = true if model.primary_key.to_s == name
           set_readonly(name,prop)
           set_type(col.type, prop)
           set_format(col.type, prop)
