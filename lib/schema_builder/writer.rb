@@ -83,7 +83,13 @@ module SchemaBuilder
           reqs = route.requirements
           next if reqs.empty? ||
                   skip_contrl.detect{|c| reqs[:controller][c] } ||
-                  skip_actions.detect{|a| reqs[:action][a]}
+                  skip_actions.detect{|a|
+                    if reqs[:action].is_a?(Hash)
+                      reqs[:action][a]
+                    elsif reqs[:action].is_a?(Regexp)
+                      reqs[:action].match(a)
+                    end
+                  }
 
           # setup links ary
           out[ reqs[:controller] ] = [] unless out[reqs[:controller]]
