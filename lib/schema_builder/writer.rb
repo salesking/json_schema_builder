@@ -43,7 +43,7 @@ module SchemaBuilder
         model.columns_hash.each do |name, col|
           prop = {}
           prop['description'] = 'the field description'
-          prop['identity'] = true if col.primary
+          prop['identity'] = true if model.primary_key.to_s == name
           set_readonly(name,prop)
           set_type(col.type, prop)
           set_format(col.type, prop)
@@ -83,7 +83,13 @@ module SchemaBuilder
           reqs = route.requirements
           next if reqs.empty? ||
                   skip_contrl.detect{|c| reqs[:controller][c] } ||
-                  skip_actions.detect{|a| reqs[:action][a]}
+                  skip_actions.detect{|a|
+                    if reqs[:action].is_a?(Hash)
+                      reqs[:action][a]
+                    elsif reqs[:action].is_a?(Regexp)
+                      reqs[:action].match(a)
+                    end
+                  }
 
           # setup links ary
           out[ reqs[:controller] ] = [] unless out[reqs[:controller]]
