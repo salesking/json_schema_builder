@@ -7,17 +7,17 @@ describe SchemaBuilder::Writer do
       @writer = SchemaBuilder::Writer.new
     end
     it 'should get model_path' do
-      @writer.model_path.should == "#{Dir.pwd}/app/models/**/*.rb"
+      expect(@writer.model_path).to eq "#{Dir.pwd}/app/models/**/*.rb"
     end
 
     it 'should set model_path' do
       path = 'some/model-folder/*.*.rb'
       @writer.model_path = path
-      @writer.model_path.should == path
+      expect(@writer.model_path).to eq path
     end
 
     it 'should get models' do
-      @writer.models.should include(User)
+      expect(@writer.models).to include(User)
     end
   end
 
@@ -28,11 +28,11 @@ describe SchemaBuilder::Writer do
     end
 
     it 'should set title to model human name' do
-      @user_hash['title'].should == 'User'
+      expect(@user_hash['title']).to eq 'User'
     end
 
     it 'should set name to lowercase model name' do
-      @user_hash['name'].should == 'user'
+      expect(@user_hash['name']).to eq 'user'
     end
   end
 
@@ -46,16 +46,16 @@ describe SchemaBuilder::Writer do
     end
 
     it 'should write file' do
-      File.exist?( @file_path ).should be
+      expect(File.exist?( @file_path )).to be
       File.delete @file_path
     end
 
     it 'should write valid json' do
       hsh = JSON.parse( File.read @file_path)
-      hsh['type'].should == 'object'
-      hsh['title'].should == 'User'
+      expect(hsh['type']).to eq 'object'
+      expect(hsh['title']).to eq 'User'
       field_names = hsh['properties'].keys
-      field_names.should include 'id', 'number', 'birthday', 'is_admin', 'notes'
+      expect(field_names).to include 'id', 'number', 'birthday', 'is_admin', 'notes'
     end
   end
 

@@ -8,6 +8,6 @@ ActiveRecord::Schema.define(:version => 0) do
     t.boolean :is_admin
     t.text :notes
     t.date :birthday
-    t.timestamps
+    t.timestamps null: false
   end
 end
