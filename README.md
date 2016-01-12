@@ -11,7 +11,7 @@ properties, since the gem only uses the available ActiveRecord database fields.
 ## Usage
 
 Hook the gem into your rails app and create the schema files.
-
+rake re
   gem 'json_schema_builder'
   rake schema:build
 

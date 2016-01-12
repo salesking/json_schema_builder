@@ -1,3 +1,6 @@
+# force a recent version as long as the default is too old
+before_install:
+  - gem install bundler -v 1.11
 rvm:
   - 2.2
   - 1.9.3
